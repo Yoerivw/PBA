@@ -7,7 +7,6 @@ function sanitizeDate($date){
     $newDate = date('d-m-Y', strtotime($date));
     return $newDate;
 }
-
     //$date = $_GET['date']; //string(10) "2021-06-01" 
     //$mysqldate = date('Y-m-d H:i:s', strtotime($date)); //string(19) "1970-01-01 00:33:41" // this variable to be sent as date to mysql
 
@@ -30,15 +29,7 @@ function sanitizeDate($date){
                 $amount = $_POST['amount'];
 
             if(isset($transaction) && isset($description) && isset($category) && isset($date) && isset($amount)){
-                /* echo "2. This if statement works <br>";
                 
-    
-                echo "Transaction: " . $transaction . "<br>";
-                echo "Description: " . $description . "<br>";
-                echo "Category: " . $category . "<br>";
-                echo "Amount: " . $amount . "<br>";
-                echo "Date:" . $date . "<br>"; */
-    
                 try {
                     $sql = 'INSERT INTO transaction_list (transaction,description,category,date,amount) VALUES (:transaction, :description, :category, :date, :amount)';
                 
@@ -114,10 +105,11 @@ function sanitizeDate($date){
                     <?php foreach($results as $result) :?>
                         <tr>
                             <th scope="row"><?= sanitizeDate($result['date']); ?></th>
+                            <td style="display:none;"><?= $result['id']?></td>
                             <td><?= $result['description'] ?></td>
                             <td><?= $result['category'] ?></td>
                             <td><?= $result['amount'] ?></td>
-                            <td><a><span>Edit</span></a> | <a><span>Delete</span></a></td>
+                            <td><a href="edit.php?id=<?= $result['id'];?>&transaction=<?= $result['transaction'];?>&date=<?= sanitizeDate($result['date']);?>&description=<?= $result['description'] ?>&category=<?= $result['category'] ?>&amount=<?= $result['amount'] ?>"><span>Edit</span></a> | <a href="delete.php?id=<?= $result['id'];?>"><span>Delete</span></a></td>
                         </tr>
 
                     <?php endforeach; ?>
@@ -160,7 +152,7 @@ function sanitizeDate($date){
 
                         <div class="form-group">
                             <label for="categories" >Category</label>
-                            <select class="form-control" name="category">
+                            <select class="form-control" name="category" id="categoryList">
                             <option>Groceries</option>
                             <option>Eating Out</option>
                             <option>Housing</option>
@@ -176,6 +168,9 @@ function sanitizeDate($date){
                             <option>Business Expenses</option>
                             <option>Miscelaneous</option>
                             </select>
+                        </div>
+                        <div>
+                            <input type="hidden" name="id" value="<?php echo $row[0];?>">
                         </div>
 
                         <div class="form-group">
